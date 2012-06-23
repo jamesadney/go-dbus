@@ -322,6 +322,17 @@ func Parse(buff []byte, sig string, index int) (slice []interface{}, bufIdx int,
 			slice = append(slice, n)
 			bufIdx += 2
 			sigIdx++
+		
+		case 'i': // int32
+			bufIdx = _Align(4, bufIdx)
+			l, e := _GetInt32(buff, bufIdx)
+			if e != nil {
+				err = e
+				return
+			}
+			slice = append(slice, l)
+			bufIdx += 4
+			sigIdx++
 
 		case 'q': // uint16
 			bufIdx = _Align(2, bufIdx)
