@@ -184,6 +184,18 @@ func _GetUint32(buff []byte, index int) (uint32, error) {
 	return u, nil
 }
 
+func _GetDouble(buff []byte, index int) (float64, error) {
+	if len(buff) <= index+8-1 {
+		return 0, errors.New("index error")
+	}
+	var d float64
+	e := binary.Read(bytes.NewBuffer(buff[index:len(buff)]), binary.LittleEndian, &d)
+	if e != nil {
+		return 0, e
+	}
+	return d, nil
+}
+
 func _GetBoolean(buff []byte, index int) (bool, error) {
 	if len(buff) <= index+4-1 {
 		return false, errors.New("index error")
@@ -331,6 +343,17 @@ func Parse(buff []byte, sig string, index int) (slice []interface{}, bufIdx int,
 			}
 			slice = append(slice, u)
 			bufIdx += 4
+			sigIdx++
+			
+		case 'd': // double
+			bufIdx = _Align(8, bufIdx)
+			d, e := _GetDouble(buff, bufIdx)
+			if e != nil {
+				err = e
+				return
+			}
+			slice = append(slice, d)
+			bufIdx += 8
 			sigIdx++
 
 		case 's', 'o': // string, object
