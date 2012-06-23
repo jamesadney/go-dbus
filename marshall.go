@@ -172,6 +172,18 @@ func _GetInt32(buff []byte, index int) (int32, error) {
 	return l, nil
 }
 
+func _GetInt64(buff []byte, index int) (int64, error) {
+	if len(buff) <= index+8-1 {
+		return 0, errors.New("index error")
+	}
+	var x int64
+	e := binary.Read(bytes.NewBuffer(buff[index:len(buff)]), binary.LittleEndian, &x)
+	if e != nil {
+		return 0, e
+	}
+	return x, nil
+}
+
 func _GetUint32(buff []byte, index int) (uint32, error) {
 	if len(buff) <= index+4-1 {
 		return 0, errors.New("index error")
@@ -332,6 +344,17 @@ func Parse(buff []byte, sig string, index int) (slice []interface{}, bufIdx int,
 			}
 			slice = append(slice, l)
 			bufIdx += 4
+			sigIdx++
+			
+		case 'x': // int64
+			bufIdx = _Align(8, bufIdx)
+			x, e := _GetInt64(buff, bufIdx)
+			if e != nil {
+				err = e
+				return
+			}
+			slice = append(slice, x)
+			bufIdx += 8
 			sigIdx++
 
 		case 'q': // uint16
