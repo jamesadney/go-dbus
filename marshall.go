@@ -334,7 +334,7 @@ func Parse(buff []byte, sig string, index int) (slice []interface{}, bufIdx int,
 			slice = append(slice, n)
 			bufIdx += 2
 			sigIdx++
-		
+
 		case 'i': // int32
 			bufIdx = _Align(4, bufIdx)
 			l, e := _GetInt32(buff, bufIdx)
@@ -345,7 +345,7 @@ func Parse(buff []byte, sig string, index int) (slice []interface{}, bufIdx int,
 			slice = append(slice, l)
 			bufIdx += 4
 			sigIdx++
-			
+
 		case 'x': // int64
 			bufIdx = _Align(8, bufIdx)
 			x, e := _GetInt64(buff, bufIdx)
@@ -378,7 +378,7 @@ func Parse(buff []byte, sig string, index int) (slice []interface{}, bufIdx int,
 			slice = append(slice, u)
 			bufIdx += 4
 			sigIdx++
-			
+
 		case 'd': // double
 			bufIdx = _Align(8, bufIdx)
 			d, e := _GetDouble(buff, bufIdx)
@@ -460,7 +460,6 @@ func Parse(buff []byte, sig string, index int) (slice []interface{}, bufIdx int,
 				err = e
 				return
 			}
-
 			retSlice, retidx, e := Parse(buff, stSig, idx)
 			if e != nil {
 				err = e
@@ -500,6 +499,7 @@ func Parse(buff []byte, sig string, index int) (slice []interface{}, bufIdx int,
 			sigIdx++
 			slice = append(slice, vals...)
 
+		// TODO: Make this error helpful!
 		default:
 			fmt.Println(sig[sigIdx])
 			return nil, index, errors.New("unknown type")
